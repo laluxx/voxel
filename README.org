@@ -1,0 +1,87 @@
+TODO
+
+// SHADERS AND TEXTURES
+
+void initShadersAndTextures(RenderTexture2D *target, Shader *blurShader, int *blurLoc);
+void updateBlurAmount(Player *player, Shader blurShader, int blurLoc);
+
+void initShadersAndTextures(RenderTexture2D *target, Shader *blurShader, int *blurLoc) {
+    // Load shaders
+    *blurShader = LoadShader(0, "blur.frag");
+    *blurLoc = GetShaderLocation(*blurShader, "blurAmount");
+
+    // Create a RenderTexture2D to use for post-processing effects
+    *target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+    /* SetTextureFilter(target->texture, TEXTURE_FILTER_BILINEAR);  // Set texture filter to improve blur effect */
+}
+
+void updateBlurAmount(Player *player, Shader blurShader, int blurLoc) {
+    float velocityMagnitude = Vector3Length(player->speed);
+    float blurAmount = 0.0; // Start with no blur
+
+    // Use a threshold to prevent blur when nearly stationary
+    if (velocityMagnitude > 0.1f) {
+        blurAmount = fmin(velocityMagnitude * 0.05f, 1.0f); // Cap blur amount to avoid excessive blur
+    }
+
+    // Update the shader with the new blur amount
+    SetShaderValue(blurShader, blurLoc, &blurAmount, SHADER_UNIFORM_FLOAT);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ORIGINAL
+/* void drawWorld() { */
+/*     for (int x = -GROUND_SIZE; x <= GROUND_SIZE; x++) { */
+/*         for (int z = -GROUND_SIZE; z <= GROUND_SIZE; z++) { */
+/*             Block cube = {{x * BLOCK_SIZE, GROUND_HEIGHT, z * BLOCK_SIZE}, BLOCK_SIZE, BLOCK_HEIGHT}; */
+/*             DrawCube(cube.position, cube.size, cube.height, cube.size, DARKGRAY); */
+/*             DrawCubeWires(cube.position, cube.size, cube.height, cube.size, BLACK); */
+/*         } */
+/*     } */
+/* } */
+
+
+// LIGHT
+/* void drawWorld() { */
+/*     for (int x = -GROUND_SIZE; x <= GROUND_SIZE; x++) { */
+/*         for (int z = -GROUND_SIZE; z <= GROUND_SIZE; z++) { */
+/*             Block cube = {{x * BLOCK_SIZE, GROUND_HEIGHT, z * BLOCK_SIZE}, BLOCK_SIZE, BLOCK_HEIGHT}; */
+
+/*             // Calculate distance to light */
+/*             float distance = Vector3Distance(light.position, cube.position); */
+/*             float attenuation = 1.0f / (1.0f + 0.1f * distance * distance);  // Simplified attenuation */
+
+/*             // Calculate final color based on light intensity and attenuation */
+/*             Color cubeColor = ColorFromNormalized((Vector4){ */
+/*                 light.color.r * attenuation * light.intensity / 255.0f, */
+/*                 light.color.g * attenuation * light.intensity / 255.0f, */
+/*                 light.color.b * attenuation * light.intensity / 255.0f, */
+/*                 1.0f  // α value */
+/*             }); */
+
+/*             DrawCube(cube.position, cube.size, cube.height, cube.size, cubeColor); */
+/*             DrawCubeWires(cube.position, cube.size, cube.height, cube.size, BLACK); */
+/*         } */
+/*     } */
+/* } */
